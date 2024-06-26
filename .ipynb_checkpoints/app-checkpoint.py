@@ -11,6 +11,7 @@ from linebot.models import (
 import openai
 import os
 import base64
+import traceback
 
 app = Flask(__name__)
 
@@ -63,10 +64,11 @@ def handle_text_message(event):
             TextSendMessage(text=reply_message)
         )
     except Exception as e:
+        error_message = f"An error occurred: {str(e)}\n\nTraceback:\n{traceback.format_exc()}"
         # 如果發生錯誤，回應用戶錯誤訊息
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=f"An error occurred: {str(e)}")
+            TextSendMessage(text=error_message)
         )
 
 @handler.add(MessageEvent, message=ImageMessage)
@@ -101,10 +103,11 @@ def handle_image_message(event):
             TextSendMessage(text=reply_message)
         )
     except Exception as e:
+        error_message = f"An error occurred: {str(e)}\n\nTraceback:\n{traceback.format_exc()}"
         # 如果發生錯誤，回應用戶錯誤訊息
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=f"An error occurred: {str(e)}")
+            TextSendMessage(text=error_message)
         )
 
 if __name__ == "__main__":
