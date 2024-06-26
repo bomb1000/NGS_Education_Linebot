@@ -53,8 +53,7 @@ def handle_text_message(event):
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": user_message}
-            ],
-            max_tokens=150
+            ]
         )
         # 獲取 GPT-4o 模型生成的回應訊息
         reply_message = response.choices[0].message.content
@@ -93,8 +92,7 @@ def handle_image_message(event):
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": "Analyze this image."},
                 {"role": "user", "content": f"data:image/jpeg;base64,{base64_image}"}
-            ],
-            max_tokens=150
+            ]
         )
         # 獲取 GPT-4o 模型生成的回應訊息
         reply_message = response.choices[0].message.content
