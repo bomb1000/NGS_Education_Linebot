@@ -1,6 +1,5 @@
 Flask
 line-bot-sdk
-openai==1.35.4
 psycopg2-binary
 SQLAlchemy
 tiktoken
@@ -12,3 +11,4 @@ configparser
 gunicorn
 requests
 pgvector
+openai==1.35.4
