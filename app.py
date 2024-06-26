@@ -47,7 +47,7 @@ def handle_text_message(event):
         # 獲取用戶發送的文字訊息
         user_message = event.message.text
         # 呼叫 OpenAI API 的 GPT-4o 模型來生成回應
-        response = openai.ChatCompletion.create(
+        response = openai.Completion.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
@@ -84,7 +84,7 @@ def handle_image_message(event):
             base64_image = base64.b64encode(image_file.read()).decode('utf-8')
 
         # 呼叫 OpenAI API 的 GPT-4o 模型來分析圖片
-        response = openai.ChatCompletion.create(
+        response = openai.Completion.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
