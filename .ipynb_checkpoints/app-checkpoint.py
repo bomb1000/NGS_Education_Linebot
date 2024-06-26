@@ -56,7 +56,7 @@ def handle_text_message(event):
             max_tokens=150
         )
         # 獲取 GPT-4o 模型生成的回應訊息
-        reply_message = response.choices[0].message['content'].strip()
+        reply_message = response['choices'][0]['message']['content'].strip()
         # 回應用戶訊息
         line_bot_api.reply_message(
             event.reply_token,
@@ -88,15 +88,13 @@ def handle_image_message(event):
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": [
-                    {"type": "text", "text": "Analyze this image."},
-                    {"type": "image_url", "image_url": f"data:image/jpeg;base64,{base64_image}"}
-                ]}
+                {"role": "user", "content": "Analyze this image."},
+                {"role": "user", "content": f"data:image/jpeg;base64,{base64_image}"}
             ],
             max_tokens=150
         )
         # 獲取 GPT-4o 模型生成的回應訊息
-        reply_message = response.choices[0].message['content'].strip()
+        reply_message = response['choices'][0]['message']['content'].strip()
         # 回應用戶訊息
         line_bot_api.reply_message(
             event.reply_token,
