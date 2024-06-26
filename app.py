@@ -65,7 +65,7 @@ def handle_image_message(event):
             files={"file": image_file},
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": "Analyze this image."}
+                {"role": "user", "content": "Please reply in Traitional Chinese but not Simplified Chinese in the following conversation"}
             ],
             max_tokens=150
         )
@@ -76,4 +76,5 @@ def handle_image_message(event):
     )
 
 if __name__ == "__main__":
-    app.run()
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
