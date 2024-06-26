@@ -64,7 +64,8 @@ def handle_text_message(event):
             TextSendMessage(text=reply_message)
         )
     except Exception as e:
-        error_message = f"An error occurred: {str(e)}\n\nTraceback:\n{traceback.format_exc()}"
+        openai_version = openai.__version__
+        error_message = f"An error occurred: {str(e)}\n\nTraceback:\n{traceback.format_exc()}\nOpenAI Version: {openai_version}"
         # 如果發生錯誤，回應用戶錯誤訊息
         line_bot_api.reply_message(
             event.reply_token,
@@ -103,7 +104,8 @@ def handle_image_message(event):
             TextSendMessage(text=reply_message)
         )
     except Exception as e:
-        error_message = f"An error occurred: {str(e)}\n\nTraceback:\n{traceback.format_exc()}"
+        openai_version = openai.__version__
+        error_message = f"An error occurred: {str(e)}\n\nTraceback:\n{traceback.format_exc()}\nOpenAI Version: {openai_version}"
         # 如果發生錯誤，回應用戶錯誤訊息
         line_bot_api.reply_message(
             event.reply_token,
