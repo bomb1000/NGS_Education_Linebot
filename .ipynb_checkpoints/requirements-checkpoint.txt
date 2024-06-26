@@ -3,10 +3,6 @@ line-bot-sdk
 psycopg2-binary
 SQLAlchemy
 tiktoken
-langchain-openai
-langchain-core
-langchain
-langchain-community
 configparser
 gunicorn
 requests
