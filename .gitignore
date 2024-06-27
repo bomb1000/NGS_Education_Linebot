@@ -1,7 +1,11 @@
 config.ini
+
 test.ipynb
+
 app_test.py
-.ipynb_checkpoints/config-checkpoint.ini
-test.ipynb
+
 .ipynb_checkpoints/app_test-checkpoint.py
-.ipynb_checkpoints/test-checkpoint.ipynb
+.ipynb_checkpoints/config-checkpoint.ini
+temp.txt
+test.ipynb
+*.ipynb

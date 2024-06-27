@@ -12,6 +12,7 @@ import openai
 import os
 import base64
 import traceback
+from langchain.memory import ConversationBufferMemory
 
 app = Flask(__name__)
 
@@ -26,6 +27,9 @@ line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
 # 設定 OpenAI API 金鑰
 openai.api_key = OPENAI_API_KEY
+
+# 初始化對話緩衝區記憶
+memory = ConversationBufferMemory()
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -47,16 +51,19 @@ def handle_text_message(event):
     try:
         # 獲取用戶發送的文字訊息
         user_message = event.message.text
-        # 呼叫 OpenAI API 的 GPT-4o 模型來生成回應
-        response = openai.chat.completions.create(
+        # 將用戶訊息加入到對話緩衝區中
+        memory.save_context({"role": "user", "content": user_message})
+
+        # 呼叫 OpenAI API 的 GPT-4 模型來生成回應
+        response = openai.ChatCompletion.create(
             model="gpt-4o",
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": user_message}
-            ]
+            messages=memory.load_memory()
         )
-        # 獲取 GPT-4o 模型生成的回應訊息
-        reply_message = response.choices[0].message.content
+        # 獲取 GPT-4 模型生成的回應訊息
+        reply_message = response.choices[0].message['content']
+        # 將模型回應加入到對話緩衝區中
+        memory.save_context({"role": "assistant", "content": reply_message})
+
         # 回應用戶訊息
         line_bot_api.reply_message(
             event.reply_token,
@@ -85,8 +92,8 @@ def handle_image_message(event):
         with open(image_path, 'rb') as image_file:
             base64_image = base64.b64encode(image_file.read()).decode('utf-8')
 
-        # 呼叫 OpenAI API 的 GPT-4o 模型來分析圖片
-        response = openai.chat.completions.create(
+        # 呼叫 OpenAI API 的 GPT-4 模型來分析圖片
+        response = openai.ChatCompletion.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
@@ -94,8 +101,8 @@ def handle_image_message(event):
                 {"role": "user", "content": f"data:image/jpeg;base64,{base64_image}"}
             ]
         )
-        # 獲取 GPT-4o 模型生成的回應訊息
-        reply_message = response.choices[0].message.content
+        # 獲取 GPT-4 模型生成的回應訊息
+        reply_message = response.choices[0].message['content']
         # 回應用戶訊息
         line_bot_api.reply_message(
             event.reply_token,

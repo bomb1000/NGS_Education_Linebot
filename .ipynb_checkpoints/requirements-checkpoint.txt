@@ -8,3 +8,4 @@ gunicorn
 requests
 pgvector
 openai==1.35.4
+langchain
