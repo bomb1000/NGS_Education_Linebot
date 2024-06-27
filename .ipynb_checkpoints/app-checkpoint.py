@@ -17,7 +17,6 @@ from langchain.memory import ConversationBufferMemory
 app = Flask(__name__)
 
 # 環境變數設定
-# 從環境變數中取得 OpenAI API 金鑰、Channel Secret 和 Channel Access Token
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 CHANNEL_SECRET = os.getenv('CHANNEL_SECRET')
 CHANNEL_ACCESS_TOKEN = os.getenv('CHANNEL_ACCESS_TOKEN')
@@ -51,9 +50,10 @@ def handle_text_message(event):
     try:
         # 獲取用戶發送的文字訊息
         user_message = event.message.text
-        # 將用戶訊息加入到對話緩衝區中
+        # 將用戶訊息以特定格式加入到對話緩衝區中
+        input_str = f"user: {user_message}"
         memory.save_context(
-            inputs={"role": "user", "content": user_message},
+            inputs={"input": input_str},
             outputs={}
         )
 
@@ -64,10 +64,11 @@ def handle_text_message(event):
         )
         # 獲取 GPT-4 模型生成的回應訊息
         reply_message = response.choices[0].message.content
-        # 將模型回應加入到對話緩衝區中
+        # 將模型回應以特定格式加入到對話緩衝區中
+        output_str = f"assistant: {reply_message}"
         memory.save_context(
-            inputs={},
-            outputs={"role": "assistant", "content": reply_message}
+            inputs={"input": ""},
+            outputs={"output": output_str}
         )
 
         # 回應用戶訊息
@@ -127,6 +128,7 @@ if __name__ == "__main__":
     # 設定 Flask 應用的埠號，預設為 5000
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+
 
 
 
