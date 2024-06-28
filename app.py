@@ -5,12 +5,12 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage
 import openai
 import os
 import traceback
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 app = Flask(__name__)
 
 # 載入 .env 文件中的環境變量
-load_dotenv()
+# load_dotenv()
 
 # 從環境變數中取得 OpenAI API 金鑰、Channel Secret 和 Channel Access Token
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
