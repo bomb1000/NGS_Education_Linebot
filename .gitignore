@@ -9,3 +9,5 @@ app_test.py
 temp.txt
 test.ipynb
 *.ipynb
+
+.env

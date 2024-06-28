@@ -1,142 +1,161 @@
-from flask import Flask, request, abort 
-from linebot import (
-    LineBotApi, WebhookHandler
-)
-from linebot.exceptions import (
-    InvalidSignatureError, LineBotApiError
-)
-from linebot.models import (
-    MessageEvent, TextMessage, ImageMessage, TextSendMessage
-)
+from flask import Flask, request, abort
+from linebot import LineBotApi, WebhookHandler
+from linebot.exceptions import InvalidSignatureError, LineBotApiError
+from linebot.models import MessageEvent, TextMessage, TextSendMessage
 import openai
 import os
-import base64
 import traceback
-from langchain.memory import ConversationBufferMemory
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 
-# Environment variable settings
+# 載入 .env 文件中的環境變量
+load_dotenv()
+
+# 從環境變數中取得 OpenAI API 金鑰、Channel Secret 和 Channel Access Token
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 CHANNEL_SECRET = os.getenv('CHANNEL_SECRET')
 CHANNEL_ACCESS_TOKEN = os.getenv('CHANNEL_ACCESS_TOKEN')
 
-# Set up Line Bot API and Webhook Handler
+# 設定 Line Bot API 和 Webhook Handler
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
-# Set OpenAI API key
+
+# 設定 OpenAI API 金鑰
 openai.api_key = OPENAI_API_KEY
 
-# Initialize conversation buffer memory
-memory = ConversationBufferMemory(input_key="input", output_key="output", return_messages=True)
+# 創建 OpenAI 客戶端
+client = openai.OpenAI()
+
+# 創建或獲取向量儲存
+def get_or_create_vector_store():
+    try:
+        vector_stores = client.beta.vector_stores.list()
+        for store in vector_stores.data:
+            if store.name == "LineBot_Knowledge_Base":
+                print(f"使用現有的向量儲存: {store.id}")
+                return store
+        print("創建新的向量儲存")
+        new_store = client.beta.vector_stores.create(name="LineBot_Knowledge_Base")
+        print(f"新向量儲存 ID: {new_store.id}")
+        return new_store
+    except Exception as e:
+        print(f"獲取或創建向量儲存時發生錯誤: {e}")
+        raise
+
+# 上傳文件到向量儲存
+def upload_files_to_vector_store(vector_store, file_paths):
+    try:
+        file_ids = []
+        for path in file_paths:
+            with open(path, "rb") as file:
+                uploaded_file = client.files.create(file=file, purpose="assistants")
+                file_ids.append(uploaded_file.id)
+                print(f"文件上傳成功，ID: {uploaded_file.id}")
+        
+        file_batch = client.beta.vector_stores.file_batches.upload_and_poll(
+            vector_store_id=vector_store.id,
+            file_ids=file_ids
+        )
+        print(f"文件批次狀態: {file_batch.status}")
+        print(f"文件數量: {file_batch.file_counts}")
+        return file_ids
+    except Exception as e:
+        print(f"上傳文件到向量儲存時發生錯誤: {e}")
+        raise
+
+# 創建助手
+def create_assistant(vector_store_id):
+    try:
+        assistant = client.beta.assistants.create(
+            name="LineBot 助手",
+            instructions="你是一個幫助回答問題的助手。使用上傳的文件來回答問題。如果找到相關信息，請詳細說明。如果無法在上傳的文件中找到相關信息，請明確說明並解釋可能的原因。",
+            model="gpt-3.5-turbo",
+            tools=[{"type": "file_search"}],
+            tool_resources={"file_search": {"vector_store_ids": [vector_store_id]}}
+        )
+        print(f"助手創建成功，ID: {assistant.id}")
+        return assistant
+    except Exception as e:
+        print(f"創建助手時發生錯誤: {e}")
+        raise
+
+# 初始化向量儲存、上傳文件和創建助手
+vector_store = get_or_create_vector_store()
+file_paths = ["data/基因檢測類型與說明_CGP Patient Infographics-Slide M-TW-00001418.pdf", "data/基因檢測服務流程_檢測結果對癌症治療之效益_Patient brochure(A4)_M-TW-00001452.pdf"]
+file_ids = upload_files_to_vector_store(vector_store, file_paths)
+assistant = create_assistant(vector_store.id)
+
+# 用戶ID到Thread ID的映射
+user_threads = {}
 
 @app.route("/callback", methods=['POST'])
 def callback():
-    # Get X-Line-Signature header
+    # 獲取 X-Line-Signature 標頭
     signature = request.headers['X-Line-Signature']
-    # Get request body as text
+    # 獲取請求主體
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
     try:
-        # Handle webhook body
+        # 處理 Webhook 主體
         handler.handle(body, signature)
     except InvalidSignatureError:
-        # If signature is invalid, return 400 error
+        # 如果簽名無效，返回 400 錯誤
         abort(400)
     return 'OK'
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     try:
-        # Get the user's text message
+        user_id = event.source.user_id
         user_message = event.message.text
-        
-        # Retrieve the conversation history
-        history = memory.load_memory_variables({})["history"]
-        
-        # Prepare messages for the API call
-        messages = [
-            {"role": "system", "content": "You are a helpful assistant."}
-        ]
-        
-        # Add conversation history to messages
-        for message in history:
-            messages.append({"role": message.type, "content": message.content})
-        
-        # Add the current user message
-        messages.append({"role": "user", "content": user_message})
 
-        # Call OpenAI API's GPT-4 model to generate a response
-        response = openai.chat.completions.create(
-            model="gpt-4",
-            messages=messages
+        # 獲取或創建用戶的Thread
+        if user_id not in user_threads:
+            thread = client.beta.threads.create()
+            user_threads[user_id] = thread.id
+        thread_id = user_threads[user_id]
+
+        # 添加用戶消息到Thread
+        client.beta.threads.messages.create(
+            thread_id=thread_id,
+            role="user",
+            content=user_message
         )
-        
-        # Get the response message generated by the GPT-4 model
-        reply_message = response.choices[0].message.content
-        
-        # Save the conversation to memory
-        memory.chat_memory.add_user_message(user_message)
-        memory.chat_memory.add_ai_message(reply_message)
 
-        # Reply to the user's message
+        # 運行助手
+        run = client.beta.threads.runs.create(
+            thread_id=thread_id,
+            assistant_id=assistant.id
+        )
+
+        # 等待運行完成
+        while True:
+            run_status = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)
+            if run_status.status == 'completed':
+                break
+            elif run_status.status in ['failed', 'cancelled', 'expired']:
+                raise Exception(f"執行失敗，狀態: {run_status.status}")
+
+        # 獲取助手的回覆
+        messages = client.beta.threads.messages.list(thread_id=thread_id)
+        reply_message = messages.data[0].content[0].text.value
+
+        # 回應用戶訊息
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=reply_message)
         )
     except Exception as e:
-        openai_version = openai.__version__
-        error_message = f"An error occurred: {str(e)}\n\nTraceback:\n{traceback.format_exc()}\nOpenAI Version: {openai_version}"
-        # If an error occurs, respond to the user with the error message
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=error_message)
-        )
-
-@handler.add(MessageEvent, message=ImageMessage)
-def handle_image_message(event):
-    try:
-        # Get the image message sent by the user
-        message_content = line_bot_api.get_message_content(event.message.id)
-        image_path = f"/tmp/{event.message.id}.jpg"  # Save the image to the server's temporary directory
-        with open(image_path, 'wb') as fd:
-            for chunk in message_content.iter_content():
-                fd.write(chunk)
-
-        # Convert the image to a base64 string
-        with open(image_path, 'rb') as image_file:
-            base64_image = base64.b64encode(image_file.read()).decode('utf-8')
-
-        # Call OpenAI API's GPT-4 Vision model to analyze the image
-        response = openai.chat.completions.create(
-            model="gpt-4-vision-preview",
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant capable of analyzing images."},
-                {"role": "user", "content": [
-                    {"type": "text", "text": "Analyze this image."},
-                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
-                ]}
-            ],
-            max_tokens=300
-        )
-        # Get the response message generated by the GPT-4 Vision model
-        reply_message = response.choices[0].message.content
-        # Reply to the user's message
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=reply_message)
-        )
-    except Exception as e:
-        openai_version = openai.__version__
-        error_message = f"An error occurred: {str(e)}\n\nTraceback:\n{traceback.format_exc()}\nOpenAI Version: {openai_version}"
-        # If an error occurs, respond to the user with the error message
+        error_message = f"An error occurred: {str(e)}\n\nTraceback:\n{traceback.format_exc()}"
+        # 如果發生錯誤，回應用戶錯誤訊息
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=error_message)
         )
 
 if __name__ == "__main__":
-    # Set the port number for the Flask application, default is 5000
+    # 設定 Flask 應用的埠號，預設為 5000
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
 
