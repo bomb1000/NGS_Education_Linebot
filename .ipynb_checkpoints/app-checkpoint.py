@@ -5,12 +5,13 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage
 import openai
 import os
 import traceback
-# from dotenv import load_dotenv
+import time
+
 
 app = Flask(__name__)
 
-# 載入 .env 文件中的環境變量
-# load_dotenv()
+
+
 
 # 從環境變數中取得 OpenAI API 金鑰、Channel Secret 和 Channel Access Token
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
@@ -53,12 +54,23 @@ def upload_files_to_vector_store(vector_store, file_paths):
                 file_ids.append(uploaded_file.id)
                 print(f"文件上傳成功，ID: {uploaded_file.id}")
         
-        file_batch = client.beta.vector_stores.file_batches.upload_and_poll(
+        file_batch = client.beta.vector_stores.file_batches.create(
             vector_store_id=vector_store.id,
             file_ids=file_ids
         )
-        print(f"文件批次狀態: {file_batch.status}")
-        print(f"文件數量: {file_batch.file_counts}")
+        
+        # 等待文件處理完成
+        while True:
+            status = client.beta.vector_stores.file_batches.retrieve(
+                vector_store_id=vector_store.id,
+                file_batch_id=file_batch.id
+            )
+            if status.status == 'completed':
+                break
+            time.sleep(5)  # 等待5秒後再次檢查
+        
+        print(f"文件批次狀態: {status.status}")
+        print(f"文件數量: {status.file_counts}")
         return file_ids
     except Exception as e:
         print(f"上傳文件到向量儲存時發生錯誤: {e}")
@@ -136,6 +148,7 @@ def handle_text_message(event):
                 break
             elif run_status.status in ['failed', 'cancelled', 'expired']:
                 raise Exception(f"執行失敗，狀態: {run_status.status}")
+            time.sleep(1)
 
         # 獲取助手的回覆
         messages = client.beta.threads.messages.list(thread_id=thread_id)
