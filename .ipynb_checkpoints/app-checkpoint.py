@@ -15,7 +15,7 @@ CHANNEL_SECRET = os.getenv("LINE_CHANNEL_SECRET")
 CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
 
 # 設置 OpenAI API 金鑰
-openai.api_key = OPENAI_API_KEY
+openai.api_key = OPENAI_API_KEY 
 
 # 創建 OpenAI 客戶端
 client = openai.OpenAI()
