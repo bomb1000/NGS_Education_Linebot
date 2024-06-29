@@ -4,9 +4,6 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 import openai
 import os
-from openai.types.beta.threads import Run
-from openai.types.beta.assistant import Assistant
-from openai.types.beta.threads.thread_message import ThreadMessage
 
 app = Flask(__name__)
 
@@ -84,22 +81,6 @@ def get_or_create_assistant(vector_store_id):
             raise
     return assistant
 
-class EventHandler:
-    def __init__(self):
-        self.full_response = ""
-
-    def on_event(self, event):
-        if isinstance(event, Run):
-            pass  # 處理 Run 事件
-        elif isinstance(event, Assistant):
-            pass  # 處理 Assistant 事件
-        elif isinstance(event, ThreadMessage):
-            if event.content and len(event.content) > 0:
-                if hasattr(event.content[0], 'text'):
-                    self.full_response += event.content[0].text.value
-        else:
-            print(f"未知事件類型: {type(event)}")
-
 def ask_assistant(assistant, thread, question):
     try:
         # 添加用戶消息到線程
@@ -109,23 +90,23 @@ def ask_assistant(assistant, thread, question):
             content=question
         )
 
-        # 運行助手並使用 EventHandler 來處理輸出
-        event_handler = EventHandler()
+        # 運行助手
         run = client.beta.threads.runs.create(
             thread_id=thread.id,
             assistant_id=assistant.id
         )
 
+        # 等待運行完成
         while True:
-            run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
-            if run.status == 'completed':
+            run_status = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
+            if run_status.status == 'completed':
                 break
 
+        # 獲取助手的回覆
         messages = client.beta.threads.messages.list(thread_id=thread.id)
-        for message in messages.data:
-            event_handler.on_event(message)
+        response = messages.data[0].content[0].text.value
 
-        return event_handler.full_response
+        return response
 
     except Exception as e:
         print(f"處理問題時發生錯誤: {e}")
