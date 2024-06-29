@@ -7,8 +7,9 @@ import os
 
 app = Flask(__name__)
 
-# 從 Render 環境變量中獲取必要的金鑰
+# 從環境變量中獲取必要的金鑰
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_ASSISTANT_ID = os.getenv("OPENAI_ASSISTANT_ID")
 CHANNEL_SECRET = os.getenv("LINE_CHANNEL_SECRET")
 CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
 
@@ -22,66 +23,10 @@ client = openai.OpenAI()
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
 
-# 全局變量來存儲 vector store 和 assistant
-vector_store = None
-assistant = None
-
 # 用戶ID到Thread ID的映射
 user_threads = {}
 
-# 創建或獲取向量儲存
-def get_or_create_vector_store():
-    global vector_store
-    if vector_store is None:
-        try:
-            vector_stores = client.beta.vector_stores.list()
-            for store in vector_stores.data:
-                if store.name == "基因檢測知識庫":
-                    print(f"使用現有的向量儲存: {store.id}")
-                    vector_store = store
-                    return vector_store
-            print("創建新的向量儲存")
-            vector_store = client.beta.vector_stores.create(name="基因檢測知識庫")
-            print(f"新向量儲存創建成功，ID: {vector_store.id}")
-        except Exception as e:
-            print(f"獲取或創建向量儲存時發生錯誤: {e}")
-            raise
-    return vector_store
-
-# 上傳文件到向量儲存
-def upload_files_to_vector_store(vector_store, file_paths):
-    try:
-        file_streams = [open(path, "rb") for path in file_paths]
-        file_batch = client.beta.vector_stores.file_batches.upload_and_poll(
-            vector_store_id=vector_store.id,
-            files=file_streams
-        )
-        print(f"文件批次狀態: {file_batch.status}")
-        print(f"文件數量: {file_batch.file_counts}")
-        return file_batch
-    except Exception as e:
-        print(f"上傳文件到向量儲存時發生錯誤: {e}")
-        raise
-
-# 創建或獲取助手
-def get_or_create_assistant(vector_store_id):
-    global assistant
-    if assistant is None:
-        try:
-            assistant = client.beta.assistants.create(
-                name="基因檢測專家助手",
-                instructions="您是一位專業的基因檢測專家。使用您的知識庫來回答關於基因檢測的問題。",
-                model="gpt-3.5-turbo",
-                tools=[{"type": "file_search"}],
-                tool_resources={"file_search": {"vector_store_ids": [vector_store_id]}}
-            )
-            print(f"助手創建成功，ID: {assistant.id}")
-        except Exception as e:
-            print(f"創建助手時發生錯誤: {e}")
-            raise
-    return assistant
-
-def ask_assistant(assistant, thread, question):
+def ask_assistant(thread, question):
     try:
         # 添加用戶消息到線程
         client.beta.threads.messages.create(
@@ -93,7 +38,7 @@ def ask_assistant(assistant, thread, question):
         # 運行助手
         run = client.beta.threads.runs.create(
             thread_id=thread.id,
-            assistant_id=assistant.id
+            assistant_id=OPENAI_ASSISTANT_ID
         )
 
         # 等待運行完成
@@ -111,13 +56,6 @@ def ask_assistant(assistant, thread, question):
     except Exception as e:
         print(f"處理問題時發生錯誤: {e}")
         return f"發生錯誤: {str(e)}"
-
-# 初始化向量儲存、上傳檔案和創建助手
-print("開始初始化應用...")
-file_paths = ["data/基因檢測類型與說明_CGP Patient Infographics-Slide M-TW-00001418.pdf", "data/基因檢測服務流程_檢測結果對癌症治療之效益_Patient brochure(A4)_M-TW-00001452.pdf"]
-vector_store = get_or_create_vector_store()
-upload_files_to_vector_store(vector_store, file_paths)
-assistant = get_or_create_assistant(vector_store.id)
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -142,7 +80,7 @@ def handle_text_message(event):
     thread_id = user_threads[user_id]
 
     # 獲取助手的回覆
-    response = ask_assistant(assistant, client.beta.threads.retrieve(thread_id), user_message)
+    response = ask_assistant(client.beta.threads.retrieve(thread_id), user_message)
 
     # 回應用戶消息
     line_bot_api.reply_message(
