@@ -4,8 +4,9 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 import openai
 import os
-from typing_extensions import override
-from openai import AssistantEventHandler
+from openai.types.beta.threads import Run
+from openai.types.beta.assistant import Assistant
+from openai.types.beta.threads.thread_message import ThreadMessage
 
 app = Flask(__name__)
 
@@ -33,71 +34,31 @@ user_threads = {}
 
 # 創建或獲取向量儲存
 def get_or_create_vector_store():
-    global vector_store
-    if vector_store is None:
-        try:
-            vector_stores = client.beta.vector_stores.list()
-            for store in vector_stores.data:
-                if store.name == "基因檢測知識庫":
-                    print(f"使用現有的向量儲存: {store.id}")
-                    vector_store = store
-                    return vector_store
-            print("創建新的向量儲存")
-            vector_store = client.beta.vector_stores.create(name="基因檢測知識庫")
-            print(f"新向量儲存創建成功，ID: {vector_store.id}")
-        except Exception as e:
-            print(f"獲取或創建向量儲存時發生錯誤: {e}")
-            raise
-    return vector_store
+    # ... [保持不變] ...
 
 # 上傳文件到向量儲存
 def upload_files_to_vector_store(vector_store, file_paths):
-    try:
-        file_streams = [open(path, "rb") for path in file_paths]
-        file_batch = client.beta.vector_stores.file_batches.upload_and_poll(
-            vector_store_id=vector_store.id,
-            files=file_streams
-        )
-        print(f"文件批次狀態: {file_batch.status}")
-        print(f"文件數量: {file_batch.file_counts}")
-        return file_batch
-    except Exception as e:
-        print(f"上傳文件到向量儲存時發生錯誤: {e}")
-        raise
+    # ... [保持不變] ...
 
 # 創建或獲取助手
 def get_or_create_assistant(vector_store_id):
-    global assistant
-    if assistant is None:
-        try:
-            assistant = client.beta.assistants.create(
-                name="基因檢測專家助手",
-                instructions="您是一位專業的基因檢測專家。使用您的知識庫來回答關於基因檢測的問題。",
-                model="gpt-3.5-turbo",
-                tools=[{"type": "file_search"}],
-                tool_resources={"file_search": {"vector_store_ids": [vector_store_id]}}
-            )
-            print(f"助手創建成功，ID: {assistant.id}")
-        except Exception as e:
-            print(f"創建助手時發生錯誤: {e}")
-            raise
-    return assistant
+    # ... [保持不變] ...
 
-class EventHandler(AssistantEventHandler):
+class EventHandler:
     def __init__(self):
         self.full_response = ""
 
-    @override
-    def on_text_created(self, text) -> None:
-        self.full_response += text.value
-
-    @override
-    def on_tool_call_created(self, tool_call):
-        pass
-
-    @override
-    def on_message_done(self, message) -> None:
-        pass
+    def on_event(self, event):
+        if isinstance(event, Run):
+            pass  # 處理 Run 事件
+        elif isinstance(event, Assistant):
+            pass  # 處理 Assistant 事件
+        elif isinstance(event, ThreadMessage):
+            if event.content and len(event.content) > 0:
+                if hasattr(event.content[0], 'text'):
+                    self.full_response += event.content[0].text.value
+        else:
+            print(f"未知事件類型: {type(event)}")
 
 def ask_assistant(assistant, thread, question):
     try:
@@ -110,12 +71,19 @@ def ask_assistant(assistant, thread, question):
 
         # 運行助手並使用 EventHandler 來處理輸出
         event_handler = EventHandler()
-        with client.beta.threads.runs.stream(
+        run = client.beta.threads.runs.create(
             thread_id=thread.id,
-            assistant_id=assistant.id,
-            event_handler=event_handler,
-        ) as stream:
-            stream.until_done()
+            assistant_id=assistant.id
+        )
+
+        while True:
+            run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
+            if run.status == 'completed':
+                break
+
+        messages = client.beta.threads.messages.list(thread_id=thread.id)
+        for message in messages.data:
+            event_handler.on_event(message)
 
         return event_handler.full_response
 
@@ -132,34 +100,11 @@ assistant = get_or_create_assistant(vector_store.id)
 
 @app.route("/callback", methods=['POST'])
 def callback():
-    signature = request.headers['X-Line-Signature']
-    body = request.get_data(as_text=True)
-    app.logger.info("Request body: " + body)
-    try:
-        handler.handle(body, signature)
-    except InvalidSignatureError:
-        abort(400)
-    return 'OK'
+    # ... [保持不變] ...
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
-    user_id = event.source.user_id
-    user_message = event.message.text
-
-    # 獲取或創建用戶的Thread
-    if user_id not in user_threads:
-        thread = client.beta.threads.create()
-        user_threads[user_id] = thread.id
-    thread_id = user_threads[user_id]
-
-    # 獲取助手的回覆
-    response = ask_assistant(assistant, client.beta.threads.retrieve(thread_id), user_message)
-
-    # 回應用戶消息
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=response)
-    )
+    # ... [保持不變] ...
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
