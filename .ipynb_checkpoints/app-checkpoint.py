@@ -34,15 +34,55 @@ user_threads = {}
 
 # 創建或獲取向量儲存
 def get_or_create_vector_store():
-    # ... [保持不變] ...
+    global vector_store
+    if vector_store is None:
+        try:
+            vector_stores = client.beta.vector_stores.list()
+            for store in vector_stores.data:
+                if store.name == "基因檢測知識庫":
+                    print(f"使用現有的向量儲存: {store.id}")
+                    vector_store = store
+                    return vector_store
+            print("創建新的向量儲存")
+            vector_store = client.beta.vector_stores.create(name="基因檢測知識庫")
+            print(f"新向量儲存創建成功，ID: {vector_store.id}")
+        except Exception as e:
+            print(f"獲取或創建向量儲存時發生錯誤: {e}")
+            raise
+    return vector_store
 
 # 上傳文件到向量儲存
 def upload_files_to_vector_store(vector_store, file_paths):
-    # ... [保持不變] ...
+    try:
+        file_streams = [open(path, "rb") for path in file_paths]
+        file_batch = client.beta.vector_stores.file_batches.upload_and_poll(
+            vector_store_id=vector_store.id,
+            files=file_streams
+        )
+        print(f"文件批次狀態: {file_batch.status}")
+        print(f"文件數量: {file_batch.file_counts}")
+        return file_batch
+    except Exception as e:
+        print(f"上傳文件到向量儲存時發生錯誤: {e}")
+        raise
 
 # 創建或獲取助手
 def get_or_create_assistant(vector_store_id):
-    # ... [保持不變] ...
+    global assistant
+    if assistant is None:
+        try:
+            assistant = client.beta.assistants.create(
+                name="基因檢測專家助手",
+                instructions="您是一位專業的基因檢測專家。使用您的知識庫來回答關於基因檢測的問題。",
+                model="gpt-3.5-turbo",
+                tools=[{"type": "file_search"}],
+                tool_resources={"file_search": {"vector_store_ids": [vector_store_id]}}
+            )
+            print(f"助手創建成功，ID: {assistant.id}")
+        except Exception as e:
+            print(f"創建助手時發生錯誤: {e}")
+            raise
+    return assistant
 
 class EventHandler:
     def __init__(self):
@@ -100,11 +140,34 @@ assistant = get_or_create_assistant(vector_store.id)
 
 @app.route("/callback", methods=['POST'])
 def callback():
-    # ... [保持不變] ...
+    signature = request.headers['X-Line-Signature']
+    body = request.get_data(as_text=True)
+    app.logger.info("Request body: " + body)
+    try:
+        handler.handle(body, signature)
+    except InvalidSignatureError:
+        abort(400)
+    return 'OK'
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
-    # ... [保持不變] ...
+    user_id = event.source.user_id
+    user_message = event.message.text
+
+    # 獲取或創建用戶的Thread
+    if user_id not in user_threads:
+        thread = client.beta.threads.create()
+        user_threads[user_id] = thread.id
+    thread_id = user_threads[user_id]
+
+    # 獲取助手的回覆
+    response = ask_assistant(assistant, client.beta.threads.retrieve(thread_id), user_message)
+
+    # 回應用戶消息
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=response)
+    )
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
