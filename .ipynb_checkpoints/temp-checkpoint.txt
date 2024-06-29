@@ -1,0 +1,359 @@
+Confidential – Strictly for Internal Use
+CGP Patient Infographics
+M-TW-00001418
+01 什麼是癌症？
+人體器官由組織構成，組織內含許多細胞。細胞是我們體內最小的功
+能性單元。每個細胞都內含一個細胞核。
+每個細胞核裡都有一組基因體。基因體內含許多基因。
+基因由DNA組成，內含所有人體運作的必要資訊。
+器官
+組織
+細胞
+細胞核
+基因體
+染色體
+DNA
+基因
+02 什麼是癌症？
+細胞的生命週期有限，因此會持續汰舊換新。
+汰換的方式為生長和分裂。
+過程中也會複製細胞內的DNA，因此每個新的細胞都會有一組複製的
+DNA。
+細胞生長
+細胞分裂
+03 什麼是癌症？
+DNA複製時可能會發生錯誤。
+這些錯誤在醫學上被稱為「突變」。
+正常的DNA
+變異的DNA
+04 什麼是癌症？
+突變可能是由外在因子所造成。
+外在因子例如：抽煙、喝酒、化學/輻射物質曝露。細菌或病毒（如：
+人類乳突病毒HPV）感染也可能造成突變。
+突變也可能來自遺傳，這類突變稱為「先天遺傳變異」。
+老化
+生活習慣
+化學物質
+感染
+遺傳
+輻射
+正常的DNA
+DNA突變
+後天
+外在因子暴露
+先天
+遺傳變異
+05 什麼是癌症？
+有些突變可能會影響到細胞的正常運作和生長。
+隨著時間過去，沒有被修復的突變會逐漸累積在細胞裡，使細胞成為
+生長/分裂失控的癌細胞，最終形成惡性腫瘤。
+腫瘤內的癌細胞一旦進入血管或淋巴系統，將會在體內擴散，並在其
+它器官形成腫瘤，此即所謂「癌症轉移」。
+健康的細胞
+正常的DNA
+變異的DNA
+癌細胞
+細胞
+生長失控
+惡性腫瘤
+癌細胞進入血管或淋巴系統
+癌細胞在其它
+器官形成腫瘤
+轉移
+06 癌症的命名
+我們通常會依原發腫瘤位置命名癌症（如：乳癌、肝癌、肺癌）。
+乳癌
+肝癌
+肺癌
+07 化學治療
+傳統上，癌症的療法取決於原發腫瘤位置。
+過去最常用的是化學治療（以有毒的藥物攻擊快速生長的癌細胞）。
+化學治療
+隨著醫學的進步，我們現在對癌症的DNA突變有了更多的瞭解。
+舉例來說，雖然蘿拉和安娜得的都是乳癌，但她們有不同的DNA突變，
+因此可能需要接受不同的治療。
+相對地，不同位置的原發腫瘤也可能有相同的DNA突變。因此安娜和詹
+姆士或許可以接受相似的治療。
+08 每位癌症病人都是獨特的
+蘿拉
+安娜
+詹姆士
+突變A
+突變B
+乳癌
+肺癌
+09 每位癌症病人都是獨特的
+不同病人可能有不同的突變基因和數目；因此每位病人都是獨一無二的。
+舉例來說，肺癌是「一種」疾病，卻有「很多種」突變基因譜。
+突變基因譜
+以上顯示之突變僅供說明之用
+10 精準醫療
+癌症DNA突變檢測有助於醫師做出更精準的醫療決策。
+治療需要在療效和副作用間取得平衡。如果藥物有非常嚴重的副作用，
+即使它能有效殺死癌細胞，也無法使用。
+「未檢測到突變」也是一個珍貴的資訊，能做為參考以設計後續的治
+療計畫。
+藥物A
+藥物B
+藥物C
+標準治療
+未檢測到
+突變
+以上顯示之突變及療法僅供說明之用
+11 生物檢體類型
+在做DNA突變檢測之前，必須先採集檢體。
+檢體可能是腫瘤組織或血液。
+腫瘤DNA
+健康的DNA
+腫瘤細胞
+白血球
+紅血球
+淋巴球
+腫瘤組織
+切片
+活檢針
+液態切片
+（血液）
+萃取DNA
+12 突變熱點檢測
+瞭解DNA突變的其中一種方法是做基因體檢測。
+突變熱點檢測是基因體檢測的一種。它會針對選定的基因區段，
+偵測特定的突變。
+在做之前就必須決定好要檢測的突變。因此，使用這個方法將會
+遺漏選定基因之外的DNA突變。
+遺漏
+發現
+遺漏
+遺漏
+13 全方位癌症基因檢測
+(Comprehensive Genomic Profiling, CGP)
+相較之下，全方位癌症基因檢測能做更廣泛的基因區段檢測，提供更
+完整的藍圖。
+全方位癌症基因檢測可同時偵測多個癌症相關的DNA突變，增加立即發
+現重要突變的機會。
+這也有助於提升醫療的精準度。
+發現
+發現
+發現
+發現
+全方位癌症基因檢測（CGP）
+腫瘤組織
+血液
+取好腫瘤或
+血液檢體
+確認腫瘤或血液檢體
+是否能做基因體檢測
+從細胞中分離DNA
+全方位
+癌症基因體檢測
+病理學檢查
+突變基因譜
+顯示偵測到的基因突變。
+臨床試驗
+治療
+突變基因
+資料庫
+資料分析
+專家團隊會比對癌症資料庫、確認所
+發現的DNA突變，並評估合適的治
+療選擇，如：標靶治療、免疫療法或
+參加臨床試驗。
+Foundation
+Medicine報告
+主治醫師會收到
+一份腫瘤醫學報告。
+檢測癌症相關DNA突變。
+此步驟約需花費
+5個工作天。
+DNA萃取
+-手術切片
+-穿刺切片
+14
+15 癌症治療方案
+癌症治療通常取決於腫
+瘤原發位置。早期、未
+擴散的腫瘤可以手術切
+除。
+手術
+放射線
+治療
+化學
+治療
+如果腫瘤位置不適合開刀、
+或術後仍有癌細胞殘留，醫
+師可能會給予放射線治療，
+以確保癌細胞全部被清除。
+高劑量的放射線也會傷害到
+正常細胞。
+醫師也可能建議病人接
+受化學治療或合併其它
+療法。化學治療是以有
+毒的藥物來攻擊快速生
+長的細胞，如：癌細胞。
+16 癌症治療方案
+新興的標靶治療能鎖定特定DNA突變的癌細胞。
+非標靶治療（如：化學治療）無法鎖定癌細胞，在殺死癌細胞的同時，
+也可能殺死快速生長的健康細胞。
+非標靶治療
+標靶治療
+健康的細胞
+癌細胞
+17 免疫療法
+癌細胞
+惡性腫瘤
+細胞生長
+失控
+癌細胞
+擴散
+癌細胞
+T細胞
+免疫檢查哨
+抑制劑
+免疫治療的作用方式：
+1)使癌細胞的生長停止
+或變慢
+2)使擴散到他處的癌細胞
+生長停止或變慢
+3) 幫助人體免疫系統對抗
+癌細胞
+停
+慢
+停
+慢
+18 免疫療法
+免疫檢查哨抑制劑能阻斷癌細胞的免疫檢查哨訊息，使免疫系統能重
+新辨認、攻擊癌細胞。
+癌細胞
+免疫檢查哨
+T細胞
+癌細胞
+癌細胞會傳遞「免疫檢查哨」訊息給
+免疫系統（此指T細胞），藉此躲避
+T細胞的攻擊。
+免疫檢查哨
+抑制劑
+19 免疫療法
+突變數目（腫瘤突變負荷，TMB）高的腫瘤較容易表現異常蛋白質，我
+們稱之為「新生抗原」。免疫系統可能會去辨認這些新生抗原。
+因此，一般會認為，TMB高的腫瘤對免疫治療的反應較好。
+廣泛型癌症基因體檢測能告訴你腫瘤的TMB程度。
+癌細胞
+產生異常的蛋白質
+（新生抗原）
+T細胞
+T細胞
+惡性腫瘤
+表現新生抗原
+將新生抗原
+呈現給T細胞
+T細胞辨認
+新生抗原
+20 腫瘤突變負荷（TMB）
+腫瘤突變負荷（TMB）的定義為每個腫瘤基因體的總突變數。
+它顯示了「癌細胞受損程度」和「新生抗原數目」間的關係。
+TMB值會以高、中、低顯示。
+腫瘤基因體
+突變
+突變數
+高
+中
+低
+21 與醫師討論適合治療方案
+根據目前的科學知識和每位病人的檢
+測結果，病人報告內容可能包含：
+．病人適用的治療方案
+．其它腫瘤治療方案
+．目前的臨床試驗
+（病人可與醫師討論是否參加）
+資料庫將持續更新；新的臨床試驗、
+病人突變基因體資料將會被加入
+Foundation Medicine報告。
+Foundation Medicine
+報告
+治療
+臨床
+試驗
+突變基因
+資料庫
+研究
+參考文獻
+Infographic 04:
+Blackadar, C.B. (2016) World J Clin Oncol 10(71):54-86.
+Hanahan, D., and Weinber RA. (2011) Cell 144(5):646-674.
+Rahner, N., et al. (2008) Dtsch Arztebl Int 105:706-14.
+Infographic 07:
+National Cancer Institute - Chemotherapy to Treat Cancer.
+Available at: https://www.cancer.gov/about-
+cancer/treatment/types/chemotherapy
+(Accessed 25 September, 2018);
+American Cancer Society - How Chemotherapy Drugs 
+Word.
+Available at: 
+https://www.cancer.org/treatment/treatments-and-
+side-effects/treatment-types/
+chemotherapy/how-chemotherapy-drugs-work.html 
+(Accessed 1 October, 2018).
+Infographic 08:
+Heim, D., et al. (2014) Int J Cancer 135:2362-9.
+Infographic 09:
+Baumgart, M. (2015) Am J Hematol Oncol 11(6):10-13.
+Infographic 10:
+NSCLC NCCN Guidelines for Patients 2018;
+NSCLC NCCN Guidelines. Version 4.2017;
+Ohashi, K,. et al. (2013) Clin Cancer Res 19:2584-91.
+Baumgart, M. (2015) Am J Hematol Oncol 11(6):10-13.
+Infographic 12:
+Naidoo, J., and Drilon, A. (2014) Am J Hematol Oncol
+10(4):4-11; Suh, J. H., et al. (2016) The Oncologist 21:684-
+691.
+Infographic 13:
+Frampton, G.M., et al. (2013) Nature Biotechnol 31:1023-31;
+Dong, L., et al. (2015) Curr Genomics 16:253-563.
+Infographic 15:
+National Cancer Institute - Surgery to Treat Cancer.
+Available at: https://www.cancer.gov/about-
+cancer/treatment/types/surgery
+(Accessed 26 September, 2018);
+參考文獻
+American Cancer Society - Radiation Therapy Basics.
+Available at: 
+https://www.cancer.org/treatment/treatments-and-
+side-effects/treatment-types/radiation/basics.html
+(Accessed 01 October, 2018)
+National Cancer Institute - Radiation Therapy to Treat 
+Cancer.
+Available at: https://www.cancer.gov/about-
+cancer/treatment/types/radiation-therapy
+(Accessed 26 September, 2018);
+National Cancer Institute - Chemotherapy to Treat Cancer.
+Available at: https://www.cancer.gov/about-
+cancer/treatment/types/chemotherapy
+(Accessed 25 September, 2018).
+Infographic 16:
+Baudino, T.A., et al. (2015) Curr Drug Discov Technol 12:3-
+20.
+Infographic 17:
+Farkona, S., et al. (2016) BMC Med 14:73;
+Alsaab, H.O., et al. (2017) Front Pharmacol 8:561.
+Infographic 18:
+Granier, C., et al. (2017) ESMO Open 2:e000213;
+National Cancer Institute - Immunotherapy to Treat 
+Cancer.
+Available at: https://www.cancer.gov/about-
+cancer/treatment/types/immunotherapy
+(Accessed 26 September, 2018).
+Infographic 19:
+Lu, Y.C., et al. (2016) Semin Immunol 28:22-7.
+Goodman, A.M., et al. (2017) Mol Cancer Ther 16:2598-
+608.
+Infographic 20:
+Farkona, S., et al. (2016) BMC Med 14:73;
+Cancer research UK - Adoptive Cell transfer. Available at: 
+https://www.cancerresearchuk.org/
+about-cancer/cancer-in-
+general/treatment/immunotherapy/ types/adoptive-cell-
+transfer
+(Accessed 26 September, 2018).
+Thank you
+Doing now what patients 
+need next
