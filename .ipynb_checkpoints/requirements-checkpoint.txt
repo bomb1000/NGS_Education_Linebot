@@ -1,11 +1,7 @@
 Flask
 line-bot-sdk
-psycopg2-binary
-SQLAlchemy
 tiktoken
 configparser
 gunicorn
 requests
-pgvector
 openai==1.35.4
-langchain

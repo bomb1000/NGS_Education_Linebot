@@ -1,0 +1,10 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_ASSISTANT_ID = os.getenv("OPENAI_ASSISTANT_ID")
+FRIENDLY_ASSISTANT_ID = os.getenv("FRIENDLY_ASSISTANT_ID")
+CHANNEL_SECRET = os.getenv("LINE_CHANNEL_SECRET_TEST_2")
+CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN_TEST_2")
