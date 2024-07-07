@@ -31,5 +31,7 @@ def handle_postback_event(event):
     handle_postback(event, line_bot_api)
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 5000))
+    port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
+
+print(f"Application is running on port {os.environ.get('PORT', 10000)}")
