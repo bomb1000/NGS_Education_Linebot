@@ -22,8 +22,8 @@
 
 1. 克隆儲存庫:
    ```
-   git clone https://github.com/your-username/ngs-linebot.git
-   cd ngs-linebot
+   git clone https://github.com/bomb1000/NGS_Education_Linebot.git
+   cd NGS_Education_Linebot
    ```
 
 2. 安裝依賴:
