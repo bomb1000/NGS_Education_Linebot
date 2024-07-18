@@ -57,9 +57,12 @@
    - 查看學習總結
    - 參與NGS知識測驗
 
+## 演示影片
 
+觀看我們的 LineBot 演示視頻，了解其功能和使用方法：
+
+[![NGS 教育 LineBot 演示](https://img.youtube.com/vi/kx2fKwTQiI8/0.jpg)](https://www.youtube.com/watch?v=kx2fKwTQiI8)
 ## 聯繫方式
 
 如有任何問題或建議,請聯繫: michael491549154915@gmail.com
-
 
